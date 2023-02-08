@@ -13,7 +13,13 @@
   "license": "MIT Licence",
   "icon": "assets/duckyupdater/icon.png",
   "environment": "*",
-  "entrypoints": {},
+  "entrypoints": {
+    "main": [
+      {
+        "value": "dev.syoritohatsuki.duckyupdater.Test"
+      }
+    ]
+  },
   "mixins": [
     "duckyupdater.mixins.json"
   ],
