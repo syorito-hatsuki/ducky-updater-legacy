@@ -39,26 +39,30 @@ public class DuckyUpdater {
      * @param minecraftVersion required for request data only for current version
      * @return Set of all projects that have update available
      */
-    public static HashSet<Pair<ProjectVersion, String>> check(String minecraftVersion) {
-        HashSet<Pair<ProjectVersion, String>> projectVersionsSet = new HashSet<>();
-        LOGGER.info("MC: " + minecraftVersion);
+    public static HashSet<Pair<ProjectVersion, Pair<String, String>>> check(String minecraftVersion) {
+        HashSet<Pair<ProjectVersion, Pair<String, String>>> projectVersionsSet = new HashSet<>();
         MODRINTH_ID_LIST.forEach(metaData -> {
+            var url = URI.create(URL + "project/" + metaData.modrinthId() +
+                    "/version?loaders=[%22fabric%22]" +
+                    "&game_versions=[%22" + minecraftVersion + "%22]" +
+                    "&featured=" + metaData.onlyFeatured());
+
+            LOGGER.info(url.toString());
+
             try {
                 ProjectVersion[] projectVersions = new Gson().fromJson(
                         HttpClient.newHttpClient().send(HttpRequest.newBuilder()
-                                .uri(URI.create(URL + "project/" + metaData.modrinthId() +
-                                        "/version?loaders=[%22fabric%22]" +
-                                        "&game_versions=[%22" + minecraftVersion + "%22]" +
-                                        "&featured=" + metaData.onlyFeatured()))
+                                .uri(url)
                                 .GET()
                                 .build(), HttpResponse.BodyHandlers.ofString()).body(), ProjectVersion[].class);
 
+                LOGGER.info(String.valueOf(projectVersions[0].version_type.equals(metaData.type())));
                 if (projectVersions[0].version_type.equals(metaData.type())) {
 
-                    var modVersion = getModVersion(metaData.modId());
+                    var modNameAndVersion = getModNameAndVersion(metaData.modId());
 
-                    if (!projectVersions[0].version_number.contains(modVersion))
-                        projectVersionsSet.add(new Pair<>(projectVersions[0], modVersion));
+                    if (!projectVersions[0].version_number.contains(modNameAndVersion.getRight()))
+                        projectVersionsSet.add(new Pair<>(projectVersions[0], modNameAndVersion));
 
                 }
             } catch (Exception exception) {
@@ -68,12 +72,13 @@ public class DuckyUpdater {
         return projectVersionsSet;
     }
 
-    private static String getModVersion(String modId) {
-        return FabricLoader.getInstance()
+    private static Pair<String, String> getModNameAndVersion(String modId) {
+
+        var metadata = FabricLoader.getInstance()
                 .getModContainer(modId)
                 .orElseThrow()
-                .getMetadata()
-                .getVersion()
-                .getFriendlyString();
+                .getMetadata();
+
+        return new Pair<>(metadata.getName(), metadata.getVersion().getFriendlyString());
     }
 }

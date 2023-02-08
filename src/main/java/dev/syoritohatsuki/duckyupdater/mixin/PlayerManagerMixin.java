@@ -24,8 +24,9 @@ public class PlayerManagerMixin {
     @Inject(at = @At(value = "TAIL"), method = "onPlayerConnect")
     private void onPlayerJoin(ClientConnection connection, ServerPlayerEntity player, CallbackInfo info) {
         AtomicInteger index = new AtomicInteger(1);
-        player.sendMessage(Text.literal("Updates available"));
         DuckyUpdater.check(SharedConstants.getGameVersion().getName()).forEach(data -> {
+            if (index.get() == 1) player.sendMessage(Text.literal("Updates available"));
+
             player.sendMessage(Text.literal(index.get() + ". ").append(updateText(data)).styled(style ->
                     style.withHoverEvent(
                             new HoverEvent(
@@ -34,17 +35,17 @@ public class PlayerManagerMixin {
                             )
                     )
             ), false);
+
             index.getAndIncrement();
         });
     }
 
-    private MutableText updateText(Pair<ProjectVersion, String> projectVersion) {
-        String shortName = projectVersion.getLeft().name.replace(projectVersion.getLeft().version_number, "");
+    private MutableText updateText(Pair<ProjectVersion, Pair<String, String>> projectVersion) {
         return MutableText
                 .of(TextContent.EMPTY)
-                .append(Text.literal(shortName))
-                .append(Text.literal("[").formatted(Formatting.GRAY))
-                .append(Text.literal(projectVersion.getRight()).formatted(Formatting.RED))
+                .append(Text.literal(projectVersion.getRight().getLeft()))
+                .append(Text.literal(" [").formatted(Formatting.GRAY))
+                .append(Text.literal(projectVersion.getRight().getRight()).formatted(Formatting.RED))
                 .append(Text.literal(" -> ").formatted(Formatting.GRAY))
                 .append(Text.literal(projectVersion.getLeft().version_number).formatted(Formatting.GREEN))
                 .append(Text.literal("]").formatted(Formatting.GRAY));
