@@ -1,7 +1,6 @@
 plugins {
     id("fabric-loom")
     kotlin("jvm")
-    kotlin("plugin.serialization")
 }
 
 base {
@@ -9,7 +8,6 @@ base {
     archivesName.set(archivesBaseName)
 }
 
-val fabricKotlinVersion: String by project
 val javaVersion = JavaVersion.VERSION_17
 val loaderVersion: String by project
 val minecraftVersion: String by project
@@ -48,8 +46,6 @@ dependencies {
 
     val fabricVersion: String by project
     modImplementation("net.fabricmc.fabric-api", "fabric-api", fabricVersion)
-
-    modImplementation("net.fabricmc", "fabric-language-kotlin", fabricKotlinVersion)
 }
 
 tasks {
@@ -82,7 +78,6 @@ tasks {
                     "version" to project.version,
                     "loaderVersion" to loaderVersion,
                     "minecraftVersion" to minecraftVersion,
-                    "fabricKotlinVersion" to fabricKotlinVersion,
                     "javaVersion" to javaVersion.toString()
                 )
             )

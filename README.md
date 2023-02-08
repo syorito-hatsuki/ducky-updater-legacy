@@ -1,1 +1,1 @@
-# fabric-mod-template
+# Ducky Updater

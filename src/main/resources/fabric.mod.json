@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "id": "template",
+  "id": "ducky-updater",
   "version": "${version}",
-  "name": "Template Mod",
-  "description": "Mod Description",
+  "name": "Ducky Updater",
+  "description": "Simple library for check mod updates from modrinth",
   "authors": [
     "Syorito Hatsuki"
   ],
@@ -11,23 +11,15 @@
     "homepage": "https://syoritohatsuki.dev/"
   },
   "license": "MIT Licence",
-  "icon": "assets/template/icon.png",
+  "icon": "assets/duckyupdater/icon.png",
   "environment": "*",
-  "entrypoints": {
-    "main": [
-      {
-        "adapter": "kotlin",
-        "value": "dev.syoritohatsuki.template.TemplateMod"
-      }
-    ]
-  },
+  "entrypoints": {},
   "mixins": [
-    "template.mixins.json"
+    "duckyupdater.mixins.json"
   ],
   "depends": {
     "fabricloader": ">=${loaderVersion}",
     "fabric": "*",
-    "fabric-language-kotlin": ">=${fabricKotlinVersion}",
     "minecraft": "${minecraftVersion}",
     "java": ">=${javaVersion}"
   }
