@@ -41,13 +41,34 @@ public class PlayerManagerMixin {
     }
 
     private MutableText updateText(Pair<ProjectVersion, Pair<String, String>> projectVersion) {
+
+        final String match = match(
+                projectVersion.getRight().getRight().toCharArray(),
+                projectVersion.getLeft().version_number.toCharArray()
+        );
+
+        final String oldVersion = projectVersion.getRight().getRight().replace(match, "");
+        final String newVersion = projectVersion.getLeft().version_number.replace(match, "");
+
         return MutableText
                 .of(TextContent.EMPTY)
                 .append(Text.literal(projectVersion.getRight().getLeft()))
                 .append(Text.literal(" [").formatted(Formatting.GRAY))
-                .append(Text.literal(projectVersion.getRight().getRight()).formatted(Formatting.RED))
+                .append(Text.literal(match).formatted(Formatting.GRAY))
+                .append(Text.literal(oldVersion).formatted(Formatting.RED))
                 .append(Text.literal(" -> ").formatted(Formatting.GRAY))
-                .append(Text.literal(projectVersion.getLeft().version_number).formatted(Formatting.GREEN))
+                .append(Text.literal(match).formatted(Formatting.GRAY))
+                .append(Text.literal(newVersion).formatted(Formatting.GREEN))
                 .append(Text.literal("]").formatted(Formatting.GRAY));
+    }
+
+    private String match(char[] oldVersion, char[] newVersion) {
+        int index = 0;
+        StringBuilder result = new StringBuilder();
+        while (oldVersion[index] == newVersion[index]) {
+            result.append(oldVersion[index]);
+            index++;
+        }
+        return result.toString();
     }
 }
