@@ -21,14 +21,29 @@ public class DuckyUpdater {
 
     private static final HashSet<MetaData> MODRINTH_ID_LIST = new HashSet<>();
 
+    /**
+     * @param modrinthId you can get it on Modrinth project page
+     * @param modId      your mod id from fabric.mod.json
+     */
     static void checkForUpdate(String modrinthId, String modId) {
         checkForUpdate(modrinthId, modId, true);
     }
 
+    /**
+     * @param modrinthId   you can get it on Modrinth project page
+     * @param modId        your mod id from fabric.mod.json
+     * @param onlyFeatured I don't know what say about it :)
+     */
     static void checkForUpdate(String modrinthId, String modId, Boolean onlyFeatured) {
         checkForUpdate(modrinthId, modId, "release", onlyFeatured);
     }
 
+    /**
+     * @param modrinthId   you can get it on Modrinth project page
+     * @param modId        your mod id from fabric.mod.json
+     * @param type         channel type [release, beta, alpha]
+     * @param onlyFeatured I don't know what say about it :)
+     */
     static void checkForUpdate(String modrinthId, String modId, String type, Boolean onlyFeatured) {
         MODRINTH_ID_LIST.add(new MetaData(modrinthId, modId, type, onlyFeatured));
     }
@@ -41,6 +56,7 @@ public class DuckyUpdater {
      */
     public static HashSet<Pair<ProjectVersion, Pair<String, String>>> check(String minecraftVersion) {
         HashSet<Pair<ProjectVersion, Pair<String, String>>> projectVersionsSet = new HashSet<>();
+
         MODRINTH_ID_LIST.forEach(metaData -> {
             var url = URI.create(URL + "project/" + metaData.modrinthId() +
                     "/version?loaders=[%22fabric%22]" +
@@ -53,6 +69,7 @@ public class DuckyUpdater {
                 ProjectVersion[] projectVersions = new Gson().fromJson(
                         HttpClient.newHttpClient().send(HttpRequest.newBuilder()
                                 .uri(url)
+                                .setHeader("User-Agent", "syorito-hatsuki/ducky-updater/" + getModVersion() + " (syorito-hatsuki.dev)")
                                 .GET()
                                 .build(), HttpResponse.BodyHandlers.ofString()).body(), ProjectVersion[].class);
 
@@ -66,8 +83,7 @@ public class DuckyUpdater {
 
                 }
             } catch (Exception exception) {
-                LOGGER.error(exception.getMessage());
-            }
+                LOGGER.error(exception.getMessage()); }
         });
         return projectVersionsSet;
     }
@@ -80,5 +96,14 @@ public class DuckyUpdater {
                 .getMetadata();
 
         return new Pair<>(metadata.getName(), metadata.getVersion().getFriendlyString());
+    }
+
+    private static String getModVersion() {
+        return FabricLoader.getInstance()
+                .getModContainer("ducky-updater")
+                .orElseThrow()
+                .getMetadata()
+                .getVersion()
+                .getFriendlyString();
     }
 }
