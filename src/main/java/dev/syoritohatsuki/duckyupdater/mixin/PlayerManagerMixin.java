@@ -1,65 +1,63 @@
 package dev.syoritohatsuki.duckyupdater.mixin;
 
 import dev.syoritohatsuki.duckyupdater.DuckyUpdater;
-import dev.syoritohatsuki.duckyupdater.dto.ProjectVersion;
+import dev.syoritohatsuki.duckyupdater.dto.UpdateData;
 import net.minecraft.SharedConstants;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.HoverEvent;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
-import net.minecraft.text.TextContent;
+import net.minecraft.text.*;
 import net.minecraft.util.Formatting;
-import net.minecraft.util.Pair;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Mixin(PlayerManager.class)
 public class PlayerManagerMixin {
     @Inject(at = @At(value = "TAIL"), method = "onPlayerConnect")
     private void onPlayerJoin(ClientConnection connection, ServerPlayerEntity player, CallbackInfo info) {
-        AtomicInteger index = new AtomicInteger(1);
-        DuckyUpdater.check(SharedConstants.getGameVersion().getName()).forEach(data -> {
-            if (index.get() == 1) player.sendMessage(Text.literal("Updates available"));
+        AtomicBoolean firstLine = new AtomicBoolean(true);
+        DuckyUpdater.check(SharedConstants.getGameVersion().getName()).forEach(updateData -> {
+            if (firstLine.get()) {
+                player.sendMessage(Text.literal("Updates available").styled(style ->
+                        style.withBold(true).withColor(Formatting.YELLOW)));
+                firstLine.set(false);
+            }
 
-            player.sendMessage(Text.literal(index.get() + ". ").append(updateText(data)).styled(style ->
+            player.sendMessage(Text.literal(" - ").append(updateText(updateData)).styled(style ->
                     style.withHoverEvent(
                             new HoverEvent(
                                     HoverEvent.Action.SHOW_TEXT,
-                                    Text.literal(data.getLeft().changelog)
+                                    Text.literal(updateData.projectVersion().files()[0].url())
                             )
-                    )
+                    ).withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, ""))
             ), false);
-
-            index.getAndIncrement();
         });
     }
 
-    private MutableText updateText(Pair<ProjectVersion, Pair<String, String>> projectVersion) {
+    private MutableText updateText(UpdateData updateData) {
 
         final String match = match(
-                projectVersion.getRight().getRight().toCharArray(),
-                projectVersion.getLeft().version_number.toCharArray()
+                updateData.localVersion().toCharArray(),
+                updateData.projectVersion().version_number().toCharArray()
         );
 
-        final String oldVersion = projectVersion.getRight().getRight().replace(match, "");
-        final String newVersion = projectVersion.getLeft().version_number.replace(match, "");
+        final String oldVersion = updateData.localVersion().replace(match, "");
+        final String newVersion = updateData.projectVersion().version_number().replace(match, "");
 
         return MutableText
                 .of(TextContent.EMPTY)
-                .append(Text.literal(projectVersion.getRight().getLeft()))
-                .append(Text.literal(" [").formatted(Formatting.GRAY))
+                .append(Text.literal(updateData.name()))
+                .append(Text.literal(" [").formatted(Formatting.DARK_GRAY))
                 .append(Text.literal(match).formatted(Formatting.GRAY))
                 .append(Text.literal(oldVersion).formatted(Formatting.RED))
-                .append(Text.literal(" -> ").formatted(Formatting.GRAY))
+                .append(Text.literal(" -> ").formatted(Formatting.DARK_GRAY))
                 .append(Text.literal(match).formatted(Formatting.GRAY))
                 .append(Text.literal(newVersion).formatted(Formatting.GREEN))
-                .append(Text.literal("]").formatted(Formatting.GRAY));
+                .append(Text.literal("]").formatted(Formatting.DARK_GRAY));
     }
 
     private String match(char[] oldVersion, char[] newVersion) {

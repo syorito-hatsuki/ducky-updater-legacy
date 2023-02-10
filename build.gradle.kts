@@ -1,6 +1,5 @@
 plugins {
     id("fabric-loom")
-    kotlin("jvm")
 }
 
 base {
@@ -56,12 +55,6 @@ tasks {
         options.release.set(javaVersion.toString().toInt())
     }
 
-    withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-        kotlinOptions {
-            jvmTarget = javaVersion.toString()
-        }
-    }
-
     jar {
         from("LICENSE") {
             rename {
@@ -71,13 +64,11 @@ tasks {
     }
 
     processResources {
-        inputs.property("version", project.version)
         filesMatching("fabric.mod.json") {
             expand(
                 mutableMapOf(
                     "version" to project.version,
                     "loaderVersion" to loaderVersion,
-                    "minecraftVersion" to minecraftVersion,
                     "javaVersion" to javaVersion.toString()
                 )
             )

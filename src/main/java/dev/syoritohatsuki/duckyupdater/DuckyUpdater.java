@@ -3,7 +3,8 @@ package dev.syoritohatsuki.duckyupdater;
 import com.google.gson.Gson;
 import com.mojang.logging.LogUtils;
 import dev.syoritohatsuki.duckyupdater.dto.MetaData;
-import dev.syoritohatsuki.duckyupdater.dto.ProjectVersion;
+import dev.syoritohatsuki.duckyupdater.dto.UpdateData;
+import dev.syoritohatsuki.duckyupdater.dto.modrinth.ProjectVersion;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.util.Pair;
 import org.slf4j.Logger;
@@ -54,8 +55,8 @@ public class DuckyUpdater {
      * @param minecraftVersion required for request data only for current version
      * @return Set of all projects that have update available
      */
-    public static HashSet<Pair<ProjectVersion, Pair<String, String>>> check(String minecraftVersion) {
-        HashSet<Pair<ProjectVersion, Pair<String, String>>> projectVersionsSet = new HashSet<>();
+    public static HashSet<UpdateData> check(String minecraftVersion) {
+        HashSet<UpdateData> projectVersionsSet = new HashSet<>();
 
         MODRINTH_ID_LIST.forEach(metaData -> {
             var url = URI.create(URL + "project/" + metaData.modrinthId() +
@@ -73,17 +74,23 @@ public class DuckyUpdater {
                                 .GET()
                                 .build(), HttpResponse.BodyHandlers.ofString()).body(), ProjectVersion[].class);
 
-                LOGGER.info(String.valueOf(projectVersions[0].version_type.equals(metaData.type())));
-                if (projectVersions[0].version_type.equals(metaData.type())) {
+                if (projectVersions[0].version_type().equals(metaData.type())) {
 
                     var modNameAndVersion = getModNameAndVersion(metaData.modId());
 
-                    if (!projectVersions[0].version_number.contains(modNameAndVersion.getRight()))
-                        projectVersionsSet.add(new Pair<>(projectVersions[0], modNameAndVersion));
+                    if (!projectVersions[0].version_number().contains(modNameAndVersion.getRight()))
+                        projectVersionsSet.add(
+                                new UpdateData(
+                                        modNameAndVersion.getLeft(),
+                                        modNameAndVersion.getRight(),
+                                        projectVersions[0]
+                                )
+                        );
 
                 }
             } catch (Exception exception) {
-                LOGGER.error(exception.getMessage()); }
+                LOGGER.error(exception.getMessage());
+            }
         });
         return projectVersionsSet;
     }

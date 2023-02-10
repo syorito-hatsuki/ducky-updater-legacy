@@ -14,11 +14,7 @@
   "icon": "assets/duckyupdater/icon.png",
   "environment": "*",
   "entrypoints": {
-    "main": [
-      {
-        "value": "dev.syoritohatsuki.duckyupdater.Test"
-      }
-    ]
+
   },
   "mixins": [
     "duckyupdater.mixins.json"
@@ -26,7 +22,7 @@
   "depends": {
     "fabricloader": ">=${loaderVersion}",
     "fabric": "*",
-    "minecraft": "${minecraftVersion}",
+    "minecraft": ">=1.19",
     "java": ">=${javaVersion}"
   }
 }
