@@ -3,7 +3,7 @@
   "id": "ducky-updater",
   "version": "${version}",
   "name": "Ducky Updater",
-  "description": "Simple library for check mod updates from modrinth",
+  "description": "Simple library for checking mod updates from modrinth",
   "authors": [
     "Syorito Hatsuki"
   ],
