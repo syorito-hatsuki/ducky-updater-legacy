@@ -22,16 +22,16 @@ public class PlayerManagerMixin {
         AtomicBoolean firstLine = new AtomicBoolean(true);
         DuckyUpdater.check(SharedConstants.getGameVersion().getName()).forEach(updateData -> {
             if (firstLine.get()) {
-                player.sendMessage(Text.literal("Updates available").styled(style ->
-                        style.withBold(true).withColor(Formatting.YELLOW)));
+                player.sendMessage(new LiteralText("Updates available").styled(style ->
+                        style.withBold(true).withColor(Formatting.YELLOW)), false);
                 firstLine.set(false);
             }
 
-            player.sendMessage(Text.literal(" - ").append(updateText(updateData)).styled(style ->
+            player.sendMessage(new LiteralText(" - ").append(updateText(updateData)).styled(style ->
                     style.withHoverEvent(
                             new HoverEvent(
                                     HoverEvent.Action.SHOW_TEXT,
-                                    Text.literal(updateData.projectVersion().changelog)
+                                    new LiteralText(updateData.projectVersion().changelog)
                             )
                     ).withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, updateData.projectVersion().files[0].url))
             ), false);
@@ -48,16 +48,14 @@ public class PlayerManagerMixin {
         final String oldVersion = updateData.localVersion().replace(match, "");
         final String newVersion = updateData.projectVersion().version_number.replace(match, "");
 
-        return MutableText
-                .of(TextContent.EMPTY)
-                .append(Text.literal(updateData.name()))
-                .append(Text.literal(" [").formatted(Formatting.DARK_GRAY))
-                .append(Text.literal(match).formatted(Formatting.GRAY))
-                .append(Text.literal(oldVersion).formatted(Formatting.RED))
-                .append(Text.literal(" -> ").formatted(Formatting.DARK_GRAY))
-                .append(Text.literal(match).formatted(Formatting.GRAY))
-                .append(Text.literal(newVersion).formatted(Formatting.GREEN))
-                .append(Text.literal("]").formatted(Formatting.DARK_GRAY));
+        return new LiteralText(updateData.name())
+                .append(new LiteralText(" [").formatted(Formatting.DARK_GRAY))
+                .append(new LiteralText(match).formatted(Formatting.GRAY))
+                .append(new LiteralText(oldVersion).formatted(Formatting.RED))
+                .append(new LiteralText(" -> ").formatted(Formatting.DARK_GRAY))
+                .append(new LiteralText(match).formatted(Formatting.GRAY))
+                .append(new LiteralText(newVersion).formatted(Formatting.GREEN))
+                .append(new LiteralText("]").formatted(Formatting.DARK_GRAY));
     }
 
     private String match(char[] oldVersion, char[] newVersion) {
