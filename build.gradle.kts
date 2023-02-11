@@ -42,9 +42,6 @@ dependencies {
     mappings("net.fabricmc", "yarn", yarnMappings, null, "v2")
 
     modImplementation("net.fabricmc", "fabric-loader", loaderVersion)
-
-    val fabricVersion: String by project
-    modImplementation("net.fabricmc.fabric-api", "fabric-api", fabricVersion)
 }
 
 tasks {
