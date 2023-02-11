@@ -74,11 +74,11 @@ public class DuckyUpdater {
                                 .GET()
                                 .build(), HttpResponse.BodyHandlers.ofString()).body(), ProjectVersion[].class);
 
-                if (projectVersions[0].version_type().equals(metaData.type())) {
+                if (projectVersions[0].version_type.equals(metaData.type())) {
 
                     var modNameAndVersion = getModNameAndVersion(metaData.modId());
 
-                    if (!projectVersions[0].version_number().contains(modNameAndVersion.getRight()))
+                    if (!projectVersions[0].version_number.contains(modNameAndVersion.getRight()))
                         projectVersionsSet.add(
                                 new UpdateData(
                                         modNameAndVersion.getLeft(),

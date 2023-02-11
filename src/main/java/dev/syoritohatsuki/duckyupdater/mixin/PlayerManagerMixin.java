@@ -31,9 +31,9 @@ public class PlayerManagerMixin {
                     style.withHoverEvent(
                             new HoverEvent(
                                     HoverEvent.Action.SHOW_TEXT,
-                                    Text.literal(updateData.projectVersion().files()[0].url())
+                                    Text.literal(updateData.projectVersion().changelog)
                             )
-                    ).withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, ""))
+                    ).withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, updateData.projectVersion().files[0].url))
             ), false);
         });
     }
@@ -42,11 +42,11 @@ public class PlayerManagerMixin {
 
         final String match = match(
                 updateData.localVersion().toCharArray(),
-                updateData.projectVersion().version_number().toCharArray()
+                updateData.projectVersion().version_number.toCharArray()
         );
 
         final String oldVersion = updateData.localVersion().replace(match, "");
-        final String newVersion = updateData.projectVersion().version_number().replace(match, "");
+        final String newVersion = updateData.projectVersion().version_number.replace(match, "");
 
         return MutableText
                 .of(TextContent.EMPTY)
