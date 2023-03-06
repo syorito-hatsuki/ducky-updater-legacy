@@ -1,23 +1,22 @@
 package dev.syoritohatsuki.duckyupdater;
 
 import com.google.gson.Gson;
-import com.mojang.logging.LogUtils;
 import dev.syoritohatsuki.duckyupdater.dto.MetaData;
 import dev.syoritohatsuki.duckyupdater.dto.UpdateData;
 import dev.syoritohatsuki.duckyupdater.dto.modrinth.ProjectVersion;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.util.Pair;
-import org.slf4j.Logger;
 
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.HashSet;
+import java.util.logging.Logger;
 
 public class DuckyUpdater {
 
-    private static final Logger LOGGER = LogUtils.getLogger();
+    private static final Logger LOGGER = Logger.getGlobal();
     private static final String URL = "https://api.modrinth.com/v2/";
 
     private static final HashSet<MetaData> MODRINTH_ID_LIST = new HashSet<>();
@@ -26,6 +25,7 @@ public class DuckyUpdater {
      * @param modrinthId you can get it on Modrinth project page
      * @param modId      your mod id from fabric.mod.json
      */
+    @SuppressWarnings("unused")
     public static void checkForUpdate(String modrinthId, String modId) {
         checkForUpdate(modrinthId, modId, true);
     }
@@ -89,7 +89,7 @@ public class DuckyUpdater {
 
                 }
             } catch (Exception exception) {
-                LOGGER.error(exception.getMessage());
+                LOGGER.warning(exception.getMessage());
             }
         });
         return projectVersionsSet;
