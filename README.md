@@ -1,6 +1,6 @@
 # Ducky Updater
 
-<img src="https://i.imgur.com/iaETp3c.png" alt="" width="200" > <img src="https://i.imgur.com/Ol1Tcf8.png" alt="" width="200" >
+<img src="https://i.imgur.com/iaETp3c.png" alt="" width="200" >
 
 ## Description
 
