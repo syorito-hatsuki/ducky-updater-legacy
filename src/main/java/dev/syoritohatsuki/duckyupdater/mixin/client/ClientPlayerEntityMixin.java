@@ -1,33 +1,36 @@
-package dev.syoritohatsuki.duckyupdater.mixin;
+package dev.syoritohatsuki.duckyupdater.mixin.client;
 
 import dev.syoritohatsuki.duckyupdater.DuckyUpdater;
 import dev.syoritohatsuki.duckyupdater.dto.UpdateData;
 import net.minecraft.SharedConstants;
-import net.minecraft.network.ClientConnection;
-import net.minecraft.server.PlayerManager;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.text.*;
 import net.minecraft.util.Formatting;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-@Mixin(PlayerManager.class)
-public class PlayerManagerMixin {
-    @Inject(at = @At(value = "TAIL"), method = "onPlayerConnect")
-    private void onPlayerJoin(ClientConnection connection, ServerPlayerEntity player, CallbackInfo info) {
+@Mixin(ClientPlayerEntity.class)
+public abstract class ClientPlayerEntityMixin {
+
+    @Shadow
+    public abstract void sendMessage(Text message, boolean actionBar);
+
+    @Inject(method = "init", at = @At("TAIL"))
+    public void mixedInit(CallbackInfo ci) {
         AtomicBoolean firstLine = new AtomicBoolean(true);
         DuckyUpdater.check(SharedConstants.getGameVersion().getName()).forEach(updateData -> {
             if (firstLine.get()) {
-                player.sendMessage(new LiteralText("Updates available").styled(style ->
+                sendMessage(new LiteralText("Updates available").styled(style ->
                         style.withBold(true).withColor(Formatting.YELLOW)), false);
                 firstLine.set(false);
             }
 
-            player.sendMessage(new LiteralText(" - ").append(updateText(updateData)).styled(style ->
+            sendMessage(new LiteralText(" - ").append(updateText(updateData)).styled(style ->
                     style.withHoverEvent(
                             new HoverEvent(
                                     HoverEvent.Action.SHOW_TEXT,
@@ -40,7 +43,7 @@ public class PlayerManagerMixin {
 
     private MutableText updateText(UpdateData updateData) {
 
-        final String match = match(
+        final String match = DuckyUpdater.match(
                 updateData.localVersion().toCharArray(),
                 updateData.projectVersion().version_number.toCharArray()
         );
@@ -56,15 +59,5 @@ public class PlayerManagerMixin {
                 .append(new LiteralText(match).formatted(Formatting.GRAY))
                 .append(new LiteralText(newVersion).formatted(Formatting.GREEN))
                 .append(new LiteralText("]").formatted(Formatting.DARK_GRAY));
-    }
-
-    private String match(char[] oldVersion, char[] newVersion) {
-        int index = 0;
-        StringBuilder result = new StringBuilder();
-        while (oldVersion[index] == newVersion[index]) {
-            result.append(oldVersion[index]);
-            index++;
-        }
-        return result.toString();
     }
 }

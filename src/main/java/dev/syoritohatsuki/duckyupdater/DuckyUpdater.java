@@ -14,7 +14,7 @@ import java.net.http.HttpResponse;
 import java.util.HashSet;
 import java.util.logging.Logger;
 
-public class DuckyUpdater {
+public final class DuckyUpdater {
 
     private static final Logger LOGGER = Logger.getGlobal();
     private static final String URL = "https://api.modrinth.com/v2/";
@@ -64,8 +64,6 @@ public class DuckyUpdater {
                     "&game_versions=[%22" + minecraftVersion + "%22]" +
                     "&featured=" + metaData.onlyFeatured());
 
-            LOGGER.info(url.toString());
-
             try {
                 ProjectVersion[] projectVersions = new Gson().fromJson(
                         HttpClient.newHttpClient().send(HttpRequest.newBuilder()
@@ -112,5 +110,15 @@ public class DuckyUpdater {
                 .getMetadata()
                 .getVersion()
                 .getFriendlyString();
+    }
+
+    public static String match(char[] oldVersion, char[] newVersion) {
+        int index = 0;
+        StringBuilder result = new StringBuilder();
+        while (oldVersion[index] == newVersion[index]) {
+            result.append(oldVersion[index]);
+            index++;
+        }
+        return result.toString();
     }
 }
