@@ -58,6 +58,8 @@ public final class DuckyUpdater {
     public static HashSet<UpdateData> check(String minecraftVersion) {
         HashSet<UpdateData> projectVersionsSet = new HashSet<>();
 
+        MODRINTH_ID_LIST.add(new MetaData("mWxGwd3F", "ducky-updater", "release", true));
+
         MODRINTH_ID_LIST.forEach(metaData -> {
             var url = URI.create(URL + "project/" + metaData.modrinthId() +
                     "/version?loaders=[%22fabric%22]" +
