@@ -6,6 +6,9 @@
     "defaultRequire": 1
   },
   "mixins": [
-    "PlayerManagerMixin"
+    "MinecraftServerMixin"
+  ],
+  "client": [
+    "client.ClientPlayerEntityMixin"
   ]
 }

@@ -5,10 +5,22 @@
   "name": "Ducky Updater",
   "description": "Simple library for checking mod updates from modrinth",
   "authors": [
-    "Syorito Hatsuki"
+    "Syorito Hatsuki",
+    "Nikson"
   ],
   "contact": {
-    "homepage": "https://syoritohatsuki.dev/"
+    "homepage": "https://syoritohatsuki.dev/",
+    "issues": "https://github.com/syorito-hatsuki/ducky-updater/issues",
+    "sources": "https://github.com/syorito-hatsuki/ducky-updater"
+  },
+  "custom": {
+    "modmenu": {
+      "links": {
+        "modmenu.discord": "https://discord.com/invite/pbwnMwnUD6"
+      },
+      "badges": ["library"],
+      "update_checker": true
+    }
   },
   "license": "MIT Licence",
   "icon": "assets/duckyupdater/icon.png",
