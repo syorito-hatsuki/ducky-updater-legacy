@@ -9,7 +9,7 @@
     "Nikson"
   ],
   "contact": {
-    "homepage": "https://syoritohatsuki.dev/",
+    "homepage": "https://syorito-hatsuki.dev/",
     "issues": "https://github.com/syorito-hatsuki/ducky-updater/issues",
     "sources": "https://github.com/syorito-hatsuki/ducky-updater"
   },
@@ -33,7 +33,7 @@
   ],
   "depends": {
     "fabricloader": ">=${loaderVersion}",
-    "minecraft": ">=1.19",
+    "minecraft": ">=1.19.4",
     "java": ">=${javaVersion}"
   }
 }
