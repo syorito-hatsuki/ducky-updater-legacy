@@ -1,4 +1,4 @@
-# Ducky Updater
+# Ducky Updater (Legacy)
 
 <img src="https://i.imgur.com/iaETp3c.png" alt="" width="200" >
 
@@ -17,10 +17,10 @@ repositories {
 
 dependencies {
     // Option 1: Include Ducky Updater to project for it available within your own jar (additional ~20kb)
-    include(modImplementation("maven.modrinth", "ducky-updater", "<version>"))
+    include(modImplementation("maven.modrinth", "ducky-updater-legacy", "<version>"))
     
     // Option 2: Depend on Ducky Updater, but require that users install it manually
-    modImplementation("maven.modrinth", "ducky-updater", "<version>")
+    modImplementation("maven.modrinth", "ducky-updater-legacy", "<version>")
 }
 ```
 
