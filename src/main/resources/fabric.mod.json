@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "id": "ducky-updater",
+  "id": "ducky-updater-lib",
   "version": "${version}",
   "name": "Ducky Updater",
   "description": "Simple library for checking mod updates from modrinth",
@@ -10,8 +10,8 @@
   ],
   "contact": {
     "homepage": "https://syorito-hatsuki.dev/",
-    "issues": "https://github.com/syorito-hatsuki/ducky-updater/issues",
-    "sources": "https://github.com/syorito-hatsuki/ducky-updater"
+    "issues": "https://github.com/syorito-hatsuki/ducky-updater-lib/issues",
+    "sources": "https://github.com/syorito-hatsuki/ducky-updater-lib"
   },
   "custom": {
     "modmenu": {
@@ -25,15 +25,12 @@
   "license": "MIT Licence",
   "icon": "assets/duckyupdater/icon.png",
   "environment": "*",
-  "entrypoints": {
-
-  },
   "mixins": [
     "duckyupdater.mixins.json"
   ],
   "depends": {
     "fabricloader": ">=${loaderVersion}",
-    "minecraft": ">=1.19.4",
+    "minecraft": "1.20",
     "java": ">=${javaVersion}"
   }
 }
