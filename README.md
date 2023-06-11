@@ -1,4 +1,4 @@
-# Ducky Updater (Legacy)
+# Ducky Updater Lib
 
 <img src="https://i.imgur.com/iaETp3c.png" alt="" width="200" >
 
