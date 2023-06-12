@@ -4,7 +4,7 @@
 
 ## Description
 
-Simple library for checking mod updates from modrinth
+Simple library for checking mod updates from Modrinth
 
 ## Adding the dependency
 
@@ -17,10 +17,10 @@ repositories {
 
 dependencies {
     // Option 1: Include Ducky Updater to project for it available within your own jar (additional ~20kb)
-    include(modImplementation("maven.modrinth", "ducky-updater-legacy", "<version>"))
+    include(modImplementation("maven.modrinth", "ducky-updater-lib", "<version>"))
     
     // Option 2: Depend on Ducky Updater, but require that users install it manually
-    modImplementation("maven.modrinth", "ducky-updater-legacy", "<version>")
+    modImplementation("maven.modrinth", "ducky-updater-lib", "<version>")
 }
 ```
 
