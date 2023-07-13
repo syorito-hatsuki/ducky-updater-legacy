@@ -8,6 +8,8 @@ Simple library for checking mod updates from Modrinth
 
 ## Adding the dependency
 
+> build.gradle.kts
+
 ```gradle
 repositories {
     maven {
@@ -16,7 +18,7 @@ repositories {
 }
 
 dependencies {
-    // Option 1: Include Ducky Updater to project for it available within your own jar (additional ~20kb)
+    // Option 1: Include Ducky Updater to project for it available within your own jar (additional ~17kb)
     include(modImplementation("maven.modrinth", "ducky-updater-lib", "<version>"))
     
     // Option 2: Depend on Ducky Updater, but require that users install it manually
@@ -24,16 +26,43 @@ dependencies {
 }
 ```
 
+> fabric.mod.json
+
 ```json5
-"depends": {
+{
+  "depends": {
     "fabricloader": "*",
     ...
-    //    Also add dependency in your fabric.mod.json 
+    // Also add dependency in your fabric.mod.json 
     "ducky-updater": "*"
-},
+  }
+}
 ```
 
 ## Usage
+
+> fabric.mod.json
+
+```json5
+{
+  "custom": {
+    ...
+    "duckyupdater": {
+      //Mod modrinth ID from project page
+      "modrinthId": "mWxGwd3F",
+      // Optional (release, beta, alpha)
+      // Default: release
+      "type": "release",
+      // Optional (true, false)
+      // Default false
+      "featured": false
+    }
+  },
+}
+```
+
+<details>
+    <summary>Before 2023.7.1</summary>
 
 ```java
 public class ModName implements ModInitializer {
@@ -48,3 +77,5 @@ public class ModName implements ModInitializer {
     }
 }
 ```
+
+</details>
