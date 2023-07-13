@@ -1,3 +1,8 @@
+val modVersion: String by project
+val loaderVersion: String by project
+val minecraftVersion: String by project
+val javaVersion = JavaVersion.VERSION_17
+
 plugins {
     id("fabric-loom")
     kotlin("jvm")
@@ -5,18 +10,8 @@ plugins {
 
 base {
     val archivesBaseName: String by project
-    archivesName.set(archivesBaseName)
+    archivesName.set("$archivesBaseName-$modVersion-$minecraftVersion")
 }
-
-val javaVersion = JavaVersion.VERSION_17
-val loaderVersion: String by project
-val minecraftVersion: String by project
-
-val modVersion: String by project
-version = modVersion
-
-val mavenGroup: String by project
-group = mavenGroup
 
 repositories {
     maven {
@@ -54,18 +49,14 @@ tasks {
     }
 
     jar {
-        from("LICENSE") {
-            rename {
-                "${it}_${base.archivesName}"
-            }
-        }
+        from("LICENSE")
     }
 
     processResources {
         filesMatching("fabric.mod.json") {
             expand(
                 mutableMapOf(
-                    "version" to project.version,
+                    "version" to modVersion,
                     "loaderVersion" to loaderVersion,
                     "javaVersion" to javaVersion.toString()
                 )
