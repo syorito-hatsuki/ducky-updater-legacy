@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "ducky-updater-lib",
   "version": "${version}",
-  "name": "Ducky Updater",
+  "name": "Ducky Updater Lib",
   "description": "Simple library for checking mod updates from modrinth",
   "authors": [
     "Syorito Hatsuki",
