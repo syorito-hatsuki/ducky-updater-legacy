@@ -18,8 +18,13 @@
       "links": {
         "modmenu.discord": "https://discord.com/invite/pbwnMwnUD6"
       },
-      "badges": ["library"],
+      "badges": [
+        "library"
+      ],
       "update_checker": true
+    },
+    "duckyupdater": {
+      "modrinthId": "mWxGwd3F"
     }
   },
   "license": "MIT Licence",
