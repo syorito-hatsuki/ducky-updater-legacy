@@ -1,5 +1,6 @@
 plugins {
     id("fabric-loom")
+    kotlin("jvm")
 }
 
 base {
