@@ -31,7 +31,7 @@
   "icon": "assets/duckyupdater/icon.png",
   "environment": "*",
   "mixins": [
-    "duckyupdater.mixins.json"
+    "duckyupdaterlib.mixins.json"
   ],
   "depends": {
     "fabricloader": ">=${loaderVersion}",

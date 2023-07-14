@@ -18,6 +18,7 @@ object DuckyUpdater {
     fun requestUpdates(): Map<Pair<String, String>, UpdateData> =
         mutableMapOf<Pair<String, String>, UpdateData>().apply {
             FabricLoader.getInstance().allMods.forEach { container ->
+                if (container.metadata.getCustomValue("duckyupdater") == null) return@forEach
                 try {
                     (Gson().fromJson(
                         HttpClient.newHttpClient().send(
@@ -51,6 +52,9 @@ object DuckyUpdater {
                                 .build(), HttpResponse.BodyHandlers.ofString()
                         ).body(), JsonElement::class.java
                     ).asJsonArray[0]?.asJsonObject ?: return@forEach).let { json ->
+
+                        if (json.get("version_number").asString == container.metadata.version.friendlyString) return@forEach
+
                         UpdateData(
                             json.get("version_number").asString,
                             json.get("changelog").asString,
@@ -72,11 +76,14 @@ object DuckyUpdater {
         }
 
     fun match(oldVersion: CharArray, newVersion: CharArray): String {
-        var index = 0
         val result = StringBuilder()
-        while (oldVersion[index] == newVersion[index]) {
-            result.append(oldVersion[index])
-            index++
+        try {
+            var index = 0
+            while (oldVersion[index] == newVersion[index]) {
+                result.append(oldVersion[index])
+                index++
+            }
+        } catch (_: ArrayIndexOutOfBoundsException) {
         }
         return result.toString()
     }

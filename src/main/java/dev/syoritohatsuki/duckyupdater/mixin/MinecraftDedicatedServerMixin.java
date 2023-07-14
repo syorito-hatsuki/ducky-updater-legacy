@@ -15,18 +15,17 @@ public abstract class MinecraftDedicatedServerMixin {
 
     @Inject(method = "setupServer", at = @At("TAIL"))
     protected void runServerReturn(CallbackInfoReturnable<Boolean> cir) {
+        Executors.newSingleThreadExecutor().execute(() -> DuckyUpdater.INSTANCE.requestUpdates().forEach((ducky, updateData) -> {
 
-        String BOLD = "\u001B[1m";
-        String BRIGHT_GRAY = "\u001B[37m";
-        String BRIGHT_GREEN = "\u001B[92m";
-        String BRIGHT_RED = "\u001B[91m";
-        String GRAY = "\u001B[90m";
-        String RESET = "\u001B[0m";
-        String YELLOW = "\u001B[33m";
+            String BOLD = "\u001B[1m";
+            String BRIGHT_GRAY = "\u001B[37m";
+            String BRIGHT_GREEN = "\u001B[92m";
+            String BRIGHT_RED = "\u001B[91m";
+            String GRAY = "\u001B[90m";
+            String RESET = "\u001B[0m";
+            String YELLOW = "\u001B[33m";
 
-        AtomicBoolean firstLine = new AtomicBoolean(true);
-        Executors.newSingleThreadExecutor().submit(() -> DuckyUpdater.INSTANCE.requestUpdates().forEach((ducky, updateData) -> {
-
+            AtomicBoolean firstLine = new AtomicBoolean(true);
             if (firstLine.get()) {
                 DuckyUpdater.INSTANCE.getLogger().info("");
                 DuckyUpdater.INSTANCE.getLogger().info(BOLD + YELLOW + "Updates available" + RESET);
@@ -35,9 +34,9 @@ public abstract class MinecraftDedicatedServerMixin {
 
             var oldVersion = ducky.getSecond();
             var newVersion = updateData.getRemoteVersion();
-            var commonPrefix = DuckyUpdater.INSTANCE.match(oldVersion.toCharArray(), newVersion.toCharArray());
+            var common = DuckyUpdater.INSTANCE.match(oldVersion.toCharArray(), newVersion.toCharArray());
 
-            DuckyUpdater.INSTANCE.getLogger().info("\t- {} " + GRAY + "[" + BRIGHT_GRAY + "{}" + BRIGHT_RED + "{}" + GRAY + " -> " + BRIGHT_GRAY + "{}" + BRIGHT_GREEN + "{}" + GRAY + "]" + RESET, ducky.getFirst(), commonPrefix, oldVersion, commonPrefix, newVersion);
+            DuckyUpdater.INSTANCE.getLogger().info("\t- {} " + GRAY + "[" + BRIGHT_GRAY + "{}" + BRIGHT_RED + "{}" + GRAY + " -> " + BRIGHT_GRAY + "{}" + BRIGHT_GREEN + "{}" + GRAY + "]" + RESET, ducky.getFirst(), common, oldVersion.replace(common, ""), common, newVersion.replace(common, ""));
 
             if (!firstLine.get()) DuckyUpdater.INSTANCE.getLogger().info("");
         }));
