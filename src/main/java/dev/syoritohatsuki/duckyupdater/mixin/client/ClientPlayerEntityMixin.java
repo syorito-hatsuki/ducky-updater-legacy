@@ -1,13 +1,15 @@
 package dev.syoritohatsuki.duckyupdater.mixin.client;
 
 import dev.syoritohatsuki.duckyupdater.DuckyUpdater;
-import kotlin.Pair;
+import dev.syoritohatsuki.duckyupdater.StringUtil;
+import dev.syoritohatsuki.duckyupdater.dto.UpdateData;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.text.ClickEvent;
 import net.minecraft.text.HoverEvent;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.Pair;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -26,7 +28,7 @@ public abstract class ClientPlayerEntityMixin {
     @Inject(method = "init", at = @At("TAIL"))
     public void mixedInit(CallbackInfo ci) {
         AtomicBoolean firstLine = new AtomicBoolean(true);
-        DuckyUpdater.INSTANCE.requestUpdates().forEach(((pair, updateData) -> {
+        DuckyUpdater.requestUpdates().forEach(((pair, updateData) -> {
             if (firstLine.get()) {
                 sendMessage(Text.literal("Updates available").styled(style ->
                         style.withBold(true).withColor(Formatting.YELLOW)));
@@ -36,21 +38,21 @@ public abstract class ClientPlayerEntityMixin {
                     style.withHoverEvent(
                             new HoverEvent(
                                     HoverEvent.Action.SHOW_TEXT,
-                                    Text.literal(updateData.getChangelog())
+                                    Text.literal(updateData.changelog())
                             )
-                    ).withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, updateData.getFileUrl()))
+                    ).withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, updateData.fileUrl()))
             ));
         }));
     }
 
     @Unique
-    private MutableText updateText(Pair<String, String> pair, DuckyUpdater.UpdateData updateData) {
-        final String common = DuckyUpdater.INSTANCE.match(pair.getSecond().toCharArray(), updateData.getRemoteVersion().toCharArray());
+    private MutableText updateText(Pair<String, String> pair, UpdateData updateData) {
+        final String common = StringUtil.match(pair.getRight().toCharArray(), updateData.remoteVersion().toCharArray());
 
-        final String oldVersion = pair.getSecond().replace(common, "");
-        final String newVersion = updateData.getRemoteVersion().replace(common, "");
+        final String oldVersion = pair.getRight().replace(common, "");
+        final String newVersion = updateData.remoteVersion().replace(common, "");
 
-        return Text.literal(pair.getFirst())
+        return Text.literal(pair.getLeft())
                 .append(Text.literal(" [").formatted(Formatting.DARK_GRAY))
                 .append(Text.literal(common).formatted(Formatting.GRAY))
                 .append(Text.literal(oldVersion).formatted(Formatting.RED))

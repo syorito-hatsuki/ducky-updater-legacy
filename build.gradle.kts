@@ -5,7 +5,6 @@ val javaVersion = JavaVersion.VERSION_17
 
 plugins {
     id("fabric-loom")
-    kotlin("jvm")
 }
 
 base {
