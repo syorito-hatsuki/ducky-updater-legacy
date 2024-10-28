@@ -32,7 +32,7 @@ repositories {
 
 dependencies {
     minecraft("com.mojang", "minecraft", minecraftVersion)
-
+ 
     val yarnMappings: String by project
     mappings("net.fabricmc", "yarn", yarnMappings, null, "v2")
 

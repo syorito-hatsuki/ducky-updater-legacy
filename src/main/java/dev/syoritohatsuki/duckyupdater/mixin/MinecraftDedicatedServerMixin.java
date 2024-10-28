@@ -11,6 +11,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static dev.syoritohatsuki.duckyupdater.StringUtil.*;
+
 @Mixin(MinecraftDedicatedServer.class)
 public abstract class MinecraftDedicatedServerMixin {
 
@@ -20,19 +22,11 @@ public abstract class MinecraftDedicatedServerMixin {
 
             var firstLine = new AtomicBoolean(true);
 
-            DuckyUpdater.requestUpdates().forEach((ducky, updateData) -> {
-
-                String BOLD = "\u001B[1m";
-                String BRIGHT_GRAY = "\u001B[37m";
-                String BRIGHT_GREEN = "\u001B[92m";
-                String BRIGHT_RED = "\u001B[91m";
-                String GRAY = "\u001B[90m";
-                String RESET = "\u001B[0m";
-                String YELLOW = "\u001B[33m";
+            DuckyUpdater.getUpdateDataHashMap().forEach((ducky, updateData) -> {
 
                 if (firstLine.get()) {
-                    DuckyUpdater.logger.info("");
-                    DuckyUpdater.logger.info(BOLD + YELLOW + "Updates available" + RESET);
+                    DuckyUpdater.LOGGER.info("");
+                    DuckyUpdater.LOGGER.info("{}{}Updates available{}", BOLD, YELLOW, RESET);
                     firstLine.set(false);
                 }
 
@@ -40,11 +34,11 @@ public abstract class MinecraftDedicatedServerMixin {
                 var newVersion = updateData.remoteVersion();
                 var common = StringUtil.match(oldVersion.toCharArray(), newVersion.toCharArray());
 
-                DuckyUpdater.logger.info("\t- {} " + GRAY + "[" + BRIGHT_GRAY + "{}" + BRIGHT_RED + "{}" + GRAY + " -> " + BRIGHT_GRAY + "{}" + BRIGHT_GREEN + "{}" + GRAY + "]" + RESET, ducky.getLeft(), common, oldVersion.replace(common, ""), common, newVersion.replace(common, ""));
+                DuckyUpdater.LOGGER.info("\t- {} {}[{}{}{}{}{} -> {}{}{}{}{}]{}", ducky.getLeft(), GRAY, BRIGHT_GRAY, common, BRIGHT_RED, oldVersion.replace(common, ""), GRAY, BRIGHT_GRAY, common, BRIGHT_GREEN, newVersion.replace(common, ""), GRAY, RESET);
 
             });
 
-            if (!firstLine.get()) DuckyUpdater.logger.info("");
+            if (!firstLine.get()) DuckyUpdater.LOGGER.info("");
 
         });
     }

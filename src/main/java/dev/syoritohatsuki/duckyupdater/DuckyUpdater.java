@@ -13,29 +13,31 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.HashMap;
-import java.util.Map;
+import java.util.concurrent.Executors;
 
-public class DuckyUpdater {
+public final class DuckyUpdater {
 
-    public static final Logger logger = LogUtils.getLogger();
+    public static final Logger LOGGER = LogUtils.getLogger();
+    public static final Gson GSON = new Gson();
+    private static final HashMap<Pair<String, String>, UpdateData> UPDATE_DATA_HASH_MAP = new HashMap<>();
 
-    public static Map<Pair<String, String>, UpdateData> requestUpdates() {
-
-        final var updateMap = new HashMap<Pair<String, String>, UpdateData>();
-
-        FabricLoader.getInstance().getAllMods().forEach(modContainer -> {
+    public static void fetchUpdates() {
+        Executors.newSingleThreadExecutor().execute(() -> FabricLoader.getInstance().getAllMods().forEach(modContainer -> {
             if (modContainer.getMetadata().getCustomValue("duckyupdater") == null) return;
+
             try {
                 var url = StringUtil.buildUrl(modContainer);
                 if (url == null) return;
 
-                var json = new Gson().fromJson(
+                var json = GSON.fromJson(
                         HttpClient.newHttpClient().send(HttpRequest.newBuilder()
                                 .uri(URI.create(url))
                                 .setHeader("User-Agent", StringUtil.userAgent(modContainer))
                                 .GET()
                                 .build(), HttpResponse.BodyHandlers.ofString()).body(), JsonElement.class
                 ).getAsJsonArray().get(0).getAsJsonObject();
+
+                System.out.println(json.toString());
 
                 var remoteVersion = json.get("version_number").getAsString();
                 if (remoteVersion.equals(modContainer.getMetadata().getVersion().getFriendlyString())) return;
@@ -48,11 +50,14 @@ public class DuckyUpdater {
 
                 if (!updateData.type().equals(type)) return;
 
-                updateMap.put(new Pair<>(modContainer.getMetadata().getName(), modContainer.getMetadata().getVersion().getFriendlyString()), updateData);
+                UPDATE_DATA_HASH_MAP.put(new Pair<>(modContainer.getMetadata().getName(), modContainer.getMetadata().getVersion().getFriendlyString()), updateData);
             } catch (Exception e) {
-                logger.warn("Can't get update for " + modContainer.getMetadata().getId(), e);
+                LOGGER.warn("Can't get update for {}", modContainer.getMetadata().getId(), e);
             }
-        });
-        return updateMap;
+        }));
+    }
+
+    public static HashMap<Pair<String, String>, UpdateData> getUpdateDataHashMap() {
+        return UPDATE_DATA_HASH_MAP;
     }
 }
