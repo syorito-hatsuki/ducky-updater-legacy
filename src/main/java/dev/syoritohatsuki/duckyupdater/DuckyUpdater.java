@@ -2,6 +2,7 @@ package dev.syoritohatsuki.duckyupdater;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonSyntaxException;
 import com.mojang.logging.LogUtils;
 import dev.syoritohatsuki.duckyupdater.dto.UpdateData;
 import net.fabricmc.loader.api.FabricLoader;
@@ -29,13 +30,17 @@ public final class DuckyUpdater {
                 var url = StringUtil.buildUrl(modContainer);
                 if (url == null) return;
 
-                var json = GSON.fromJson(
+                var jsonArray = GSON.fromJson(
                         HttpClient.newHttpClient().send(HttpRequest.newBuilder()
                                 .uri(URI.create(url))
                                 .setHeader("User-Agent", StringUtil.userAgent(modContainer))
                                 .GET()
                                 .build(), HttpResponse.BodyHandlers.ofString()).body(), JsonElement.class
-                ).getAsJsonArray().get(0).getAsJsonObject();
+                ).getAsJsonArray();
+
+                if (jsonArray.isEmpty()) return;
+
+                var json = jsonArray.get(0).getAsJsonObject();
 
                 System.out.println(json.toString());
 
@@ -52,6 +57,7 @@ public final class DuckyUpdater {
 
                 UPDATE_DATA_HASH_MAP.put(new Pair<>(modContainer.getMetadata().getName(), modContainer.getMetadata().getVersion().getFriendlyString()), updateData);
             } catch (Exception e) {
+                if (e instanceof JsonSyntaxException) return;
                 LOGGER.warn("Can't get update for {}", modContainer.getMetadata().getId(), e);
             }
         }));
